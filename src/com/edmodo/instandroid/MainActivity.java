@@ -1,9 +1,5 @@
 package com.edmodo.instandroid;
 
-import com.jabistudio.androidjhlabs.filter.InvertFilter;
-import com.jabistudio.androidjhlabs.filter.SolarizeFilter;
-import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +11,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.jabistudio.androidjhlabs.filter.SolarizeFilter;
+import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
 
 public class MainActivity extends Activity {
 
@@ -38,6 +37,19 @@ public class MainActivity extends Activity {
                 startActivityForResult(captureIntent, CAMERA_CAPTURE);
             }
         });
+        
+        // Handles orientation change
+        if (savedInstanceState != null) {
+            mOrigBitmap = (Bitmap) savedInstanceState.getParcelable("m_pic");
+            if (mOrigBitmap != null) 
+                mPicView.setImageBitmap(mOrigBitmap);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("m_pic", mOrigBitmap);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
