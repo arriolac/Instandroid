@@ -1,8 +1,13 @@
 package com.edmodo.instandroid;
 
+import com.jabistudio.androidjhlabs.filter.InvertFilter;
+import com.jabistudio.androidjhlabs.filter.SolarizeFilter;
+import com.jabistudio.androidjhlabs.filter.util.AndroidUtils;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -16,7 +21,7 @@ public class MainActivity extends Activity {
     private final static int CAMERA_CAPTURE = 1;
     
     private ImageView mPicView;
-    private Bitmap mPicBitmap;
+    private Bitmap mOrigBitmap;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +44,19 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Successfully retrieved image from camera
         if (requestCode == CAMERA_CAPTURE && resultCode == RESULT_OK) {
-            mPicBitmap = (Bitmap) data.getExtras().get("data");
-            mPicView.setImageBitmap(mPicBitmap);
+            mOrigBitmap = (Bitmap) data.getExtras().get("data");
+            
+            // Filter image
+            //InvertFilter invertFilter = new InvertFilter();
+            SolarizeFilter solarFilter = new SolarizeFilter();
+            int[] src = AndroidUtils.bitmapToIntArray(mOrigBitmap);
+            int width = mOrigBitmap.getWidth();
+            int height = mOrigBitmap.getHeight();
+            //int[] dest = invertFilter.filter(src, width, height);
+            int[] dest = solarFilter.filter(src, width, height);
+            
+            Bitmap destBitmap = Bitmap.createBitmap(dest, width, height, Config.ARGB_8888);
+            mPicView.setImageBitmap(destBitmap);
         }
     }
 
